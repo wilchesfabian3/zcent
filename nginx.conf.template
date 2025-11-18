@@ -88,8 +88,13 @@ http {
             proxy_redirect ${LARAVEL_APP_URL} $scheme://$host;
             proxy_redirect ~^https?://[^/]+(/.*) $scheme://$host$1;
 
+            # Configuración SSL para backend HTTPS
+            proxy_ssl_verify off;
+            proxy_ssl_server_name on;
+
             # Cabeceras para preservar información del cliente
-            proxy_set_header Host $host;
+            # IMPORTANTE: Enviar el host del backend, no del proxy
+            proxy_set_header Host ${LARAVEL_BACKEND};
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
