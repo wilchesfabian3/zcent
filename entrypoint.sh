@@ -11,6 +11,10 @@ BLOCKED_PATHS=${BLOCKED_PATHS:-^/\.env|^/\.git.*}
 # Ejemplo: http://servidor.com:8000 -> servidor.com:8000
 LARAVEL_BACKEND=$(echo $LARAVEL_APP_URL | sed -e 's|^[^/]*//||' -e 's|/$||')
 
+# Extraer solo el hostname (sin puerto) para el header Host
+# Ejemplo: https://servidor.com:443 -> servidor.com
+LARAVEL_HOST=$(echo $LARAVEL_BACKEND | sed -e 's|:.*||')
+
 # Si ALLOWED_PATHS está vacío, permitir todas las rutas
 if [ -z "$ALLOWED_PATHS" ]; then
     ALLOWED_PATHS=".*"
@@ -26,6 +30,7 @@ echo "========================================="
 echo "Puerto: $PORT"
 echo "Aplicación Laravel: $LARAVEL_APP_URL"
 echo "Backend: $LARAVEL_BACKEND"
+echo "Host: $LARAVEL_HOST"
 echo "Rutas permitidas: $ALLOWED_PATHS"
 echo "Rutas bloqueadas: $BLOCKED_PATHS"
 echo "Tamaño máx. upload: ${MAX_UPLOAD_SIZE}M"
@@ -40,9 +45,10 @@ export BLOCKED_PATHS
 export ALLOWED_PATHS
 export ALLOWED_DEFAULT
 export LARAVEL_BACKEND
+export LARAVEL_HOST
 export LARAVEL_APP_URL
 
-envsubst '${PORT} ${MAX_UPLOAD_SIZE} ${PROXY_TIMEOUT} ${BLOCKED_PATHS} ${ALLOWED_PATHS} ${ALLOWED_DEFAULT} ${LARAVEL_BACKEND} ${LARAVEL_APP_URL}' \
+envsubst '${PORT} ${MAX_UPLOAD_SIZE} ${PROXY_TIMEOUT} ${BLOCKED_PATHS} ${ALLOWED_PATHS} ${ALLOWED_DEFAULT} ${LARAVEL_BACKEND} ${LARAVEL_HOST} ${LARAVEL_APP_URL}' \
     < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Verificar configuración de Nginx

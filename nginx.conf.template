@@ -91,10 +91,11 @@ http {
             # Configuración SSL para backend HTTPS
             proxy_ssl_verify off;
             proxy_ssl_server_name on;
+            proxy_ssl_protocols TLSv1.2 TLSv1.3;
 
             # Cabeceras para preservar información del cliente
             # IMPORTANTE: Enviar el host del backend, no del proxy
-            proxy_set_header Host ${LARAVEL_BACKEND};
+            proxy_set_header Host ${LARAVEL_HOST};
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
@@ -105,10 +106,14 @@ http {
             # Laravel usará este header para identificar el proxy cuando esté detrás de Cloudflare
             proxy_set_header X-Proxy-Domain $host;
 
-            # Timeouts (usando variable de entorno)
+            # Timeouts extendidos (usando variable de entorno)
             proxy_connect_timeout ${PROXY_TIMEOUT}s;
             proxy_send_timeout ${PROXY_TIMEOUT}s;
             proxy_read_timeout ${PROXY_TIMEOUT}s;
+
+            # Mantener conexión HTTP/1.1 con keepalive
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
 
             # Buffering
             proxy_buffering on;
