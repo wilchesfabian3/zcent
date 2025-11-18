@@ -115,11 +115,15 @@ http {
             proxy_http_version 1.1;
             proxy_set_header Connection "";
 
-            # Buffering
+            # Buffering optimizado para archivos grandes
             proxy_buffering on;
-            proxy_buffer_size 4k;
-            proxy_buffers 8 4k;
-            proxy_busy_buffers_size 8k;
+            proxy_buffer_size 16k;
+            proxy_buffers 32 16k;
+            proxy_busy_buffers_size 64k;
+
+            # Cache de proxy para archivos estáticos
+            proxy_cache_bypass $http_upgrade;
+            proxy_no_cache $http_pragma $http_authorization;
 
             # Interceptar errores del backend
             proxy_intercept_errors on;
