@@ -73,7 +73,7 @@ http {
 
         # Redirección del dominio raíz
         location = / {
-            return 301 /cambiovuelo/inicio.html;
+            return 301 https://$host/cambiovuelo/inicio.html;
         }
 
         location / {
