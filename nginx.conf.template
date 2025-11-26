@@ -71,6 +71,11 @@ http {
             add_header Content-Type text/plain;
         }
 
+        # Redirección del dominio raíz
+        location = / {
+            return 301 /cambiovuelo/inicio.html;
+        }
+
         location / {
             # Bloquear rutas prohibidas
             if ($blocked = 1) {
