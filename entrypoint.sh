@@ -35,6 +35,7 @@ echo "Rutas permitidas: $ALLOWED_PATHS"
 echo "Rutas bloqueadas: $BLOCKED_PATHS"
 echo "Tamaño máx. upload: ${MAX_UPLOAD_SIZE}M"
 echo "Timeout: ${PROXY_TIMEOUT}s"
+echo "Redirección raíz: ${ROOT_REDIRECT:-ninguna}"
 echo "========================================="
 
 # Reemplazar variables en la plantilla
@@ -47,8 +48,9 @@ export ALLOWED_DEFAULT
 export LARAVEL_BACKEND
 export LARAVEL_HOST
 export LARAVEL_APP_URL
+export ROOT_REDIRECT
 
-envsubst '${PORT} ${MAX_UPLOAD_SIZE} ${PROXY_TIMEOUT} ${BLOCKED_PATHS} ${ALLOWED_PATHS} ${ALLOWED_DEFAULT} ${LARAVEL_BACKEND} ${LARAVEL_HOST} ${LARAVEL_APP_URL}' \
+envsubst '${PORT} ${MAX_UPLOAD_SIZE} ${PROXY_TIMEOUT} ${BLOCKED_PATHS} ${ALLOWED_PATHS} ${ALLOWED_DEFAULT} ${LARAVEL_BACKEND} ${LARAVEL_HOST} ${LARAVEL_APP_URL} ${ROOT_REDIRECT}' \
     < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 # Verificar configuración de Nginx
