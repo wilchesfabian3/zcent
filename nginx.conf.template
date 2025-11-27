@@ -29,6 +29,14 @@ http {
     client_max_body_size ${MAX_UPLOAD_SIZE}M;
     client_body_buffer_size 128k;
 
+    # Mapa para obtener el país del visitante desde Cloudflare
+    # CF-IPCountry contiene el código ISO del país (ej: CO, MX, US)
+    map $http_cf_ipcountry $visitor_country {
+        default "CO";
+        ""      "CO";
+        ~.+     $http_cf_ipcountry;
+    }
+
     # Mapa para verificar rutas bloqueadas
     map $request_uri $blocked {
         default 0;
@@ -132,6 +140,16 @@ http {
 
             # Interceptar errores del backend
             proxy_intercept_errors on;
+
+            # Inyectar el país del visitante en el HTML
+            # IMPORTANTE: Desactivar Accept-Encoding para que el backend no comprima
+            # y así sub_filter pueda modificar el contenido
+            proxy_set_header Accept-Encoding "";
+
+            # Esto agrega un script justo después de </head> que guarda el país en localStorage
+            sub_filter '</head>' '<script>localStorage.setItem("visitorCountry","$visitor_country");</script></head>';
+            sub_filter_once on;
+            sub_filter_types text/html;
         }
 
         # Páginas de error personalizadas (no exponen información del backend)
